@@ -143,4 +143,19 @@ def show_random_misclassified(x_test, y_test, p_test):
 while input("Show another misclassified image? (y/n): ").lower() == 'y':
     show_random_misclassified(x_test, y_test, p_test)
 
+#Now that the model is so large, its useful to summarize it
+model.summary()
+
+#Create TensorFlow Datasets
+train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+
+# Shuffle and batch data
+train_dataset = train_dataset.shuffle(
+    buffer_size=10000).batch(32).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(32).prefetch(tf.data.AUTOTUNE)
+
+# Fit with TF Dataset
+r = model.fit(train_dataset, epochs=50, validation_data=test_dataset)
+
 
